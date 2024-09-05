@@ -1,0 +1,5 @@
+.venv
+venv
+secrets/*
+.vscode
+__pycache__
