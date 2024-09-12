@@ -3,3 +3,4 @@ venv
 secrets/*
 .vscode
 __pycache__
+ff.session.sql

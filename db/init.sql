@@ -1,3 +1,4 @@
+DROP DATABASE `ff`;
 CREATE DATABASE IF NOT EXISTS `ff`;
 
 
@@ -6,7 +7,8 @@ USE `ff`;
 CREATE OR REPLACE TABLE `team` (
     `teamId` INT PRIMARY KEY,
     `teamName` VARCHAR(255) NOT NULL,
-    `yahooId` VARCHAR(255) NOT NULL ,
+    `yahooId` VARCHAR(255) NOT NULL,
+    `profilePicture` VARCHAR(1000) NOT NULL,
     `manager` VARCHAR(255) NOT NULL
 );
 
@@ -144,3 +146,24 @@ INSERT INTO matchup (team1Id, team2Id, team3Id, weeknumber) VALUES
 (4, 3, 11, 13),
 (8, 15, 6, 13),
 (10, 1, 5, 13);
+
+CREATE OR REPLACE TABLE `matchupteam` (
+    `matchupTeamId` INT AUTO_INCREMENT PRIMARY KEY,
+    `matchupId` INT NOT NULL,
+    `teamId` INT NOT NULL,
+    FOREIGN KEY (`matchupId`) REFERENCES `matchup`(`matchupId`),
+    FOREIGN KEY (`teamId`) REFERENCES `team`(`teamId`),
+    UNIQUE (`matchupId`, `teamId`) 
+);
+
+INSERT INTO `matchupteam` (`matchupId`, `teamId`)
+SELECT `matchupId`, `team1Id` FROM `matchup`
+UNION
+SELECT `matchupId`, `team2Id` FROM `matchup`
+UNION
+SELECT `matchupId`, `team3Id` FROM `matchup`;
+
+CREATE OR REPLACE TABLE `currentweek` (
+    `id` INT PRIMARY_KEY,
+    `number` INT
+);

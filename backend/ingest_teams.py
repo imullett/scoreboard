@@ -20,6 +20,7 @@ with Session(engine) as session:
             teamId = team.team_id,
             teamName=team.name.decode('UTF-8'),
             yahooId=team.team_key,
+            profilePicture=team.team_logos[0].url,
             manager=team.managers[0].nickname
         )
         session.merge(t)
