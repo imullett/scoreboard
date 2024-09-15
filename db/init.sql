@@ -1,15 +1,15 @@
-DROP DATABASE `ff`;
-CREATE DATABASE IF NOT EXISTS `ff`;
-
+DROP DATABASE IF EXISTS `ff`;
+CREATE DATABASE `ff`;
 
 USE `ff`;
 
 CREATE OR REPLACE TABLE `team` (
     `teamId` INT PRIMARY KEY,
-    `teamName` VARCHAR(255) NOT NULL,
-    `yahooId` VARCHAR(255) NOT NULL,
-    `profilePicture` VARCHAR(1000) NOT NULL,
-    `manager` VARCHAR(255) NOT NULL
+    `teamName` VARCHAR(255),
+    `yahooId` VARCHAR(255),
+    `profilePicture` VARCHAR(1000),
+    `manager` VARCHAR(255),
+    `division` INT
 );
 
 CREATE OR REPLACE TABLE `matchup` (
@@ -57,7 +57,25 @@ CREATE OR REPLACE TABLE `game` (
     -- CONSTRAINT `FK_game_team` FOREIGN KEY (`teamId`) REFERENCES `team` (`teamId`)
 );
 
-INSERT INTO matchup (team1Id, team2Id, team3Id, weeknumber) VALUES
+CREATE OR REPLACE TABLE `matchupteam` (
+    `matchupTeamId` INT AUTO_INCREMENT PRIMARY KEY,
+    `matchupId` INT NOT NULL,
+    `teamId` INT NOT NULL,
+    FOREIGN KEY (`matchupId`) REFERENCES `matchup`(`matchupId`),
+    FOREIGN KEY (`teamId`) REFERENCES `team`(`teamId`),
+    UNIQUE (`matchupId`, `teamId`) 
+);
+
+
+CREATE OR REPLACE TABLE `currentweek` (
+    `id` INT PRIMARY KEY,
+    `number` INT
+);
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON ff.* TO 'ingestor'@'%';
+FLUSH PRIVILEGES;
+
+INSERT INTO `matchup` (team1Id, team2Id, team3Id, weeknumber) VALUES
 -- Week 1
 (2, 9, 5, 1),
 (14, 1, 6, 1),
@@ -147,23 +165,30 @@ INSERT INTO matchup (team1Id, team2Id, team3Id, weeknumber) VALUES
 (8, 15, 6, 13),
 (10, 1, 5, 13);
 
-CREATE OR REPLACE TABLE `matchupteam` (
-    `matchupTeamId` INT AUTO_INCREMENT PRIMARY KEY,
-    `matchupId` INT NOT NULL,
-    `teamId` INT NOT NULL,
-    FOREIGN KEY (`matchupId`) REFERENCES `matchup`(`matchupId`),
-    FOREIGN KEY (`teamId`) REFERENCES `team`(`teamId`),
-    UNIQUE (`matchupId`, `teamId`) 
-);
-
-INSERT INTO `matchupteam` (`matchupId`, `teamId`)
-SELECT `matchupId`, `team1Id` FROM `matchup`
+INSERT INTO `team` (teamId, division) VALUES 
+    (1,3),
+    (2,1),
+    (3,2),
+    (4,2),
+    (5,3),
+    (6,3),
+    (7,1),
+    (8,2),
+    (9,2),
+    (10,3),
+    (11,2),
+    (12,1),
+    (13,1),
+    (14,1),
+    (15,3);
+    
+INSERT INTO matchupteam (matchupId, teamId)
+SELECT matchupId, team1Id
+FROM matchup
 UNION
-SELECT `matchupId`, `team2Id` FROM `matchup`
+SELECT matchupId, team2Id
+FROM matchup
 UNION
-SELECT `matchupId`, `team3Id` FROM `matchup`;
+SELECT matchupId, team3Id
+FROM matchup;
 
-CREATE OR REPLACE TABLE `currentweek` (
-    `id` INT PRIMARY_KEY,
-    `number` INT
-);

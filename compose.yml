@@ -1,0 +1,30 @@
+services:
+  flask:
+    build: .
+    restart: always
+    ports:
+      - 5000:5000
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: '.env' 
+    volumes:
+      - ./secrets:/app/secrets
+  
+  db:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: memesbowl123
+      MARIADB_USER: ingestor
+      MARIADB_PASSWORD: memesbowl123
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d 
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3 

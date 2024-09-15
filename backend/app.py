@@ -7,7 +7,7 @@ from sqlalchemy.sql.expression import func
 from statistics import median
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ingestor:memesbowl123@localhost:3306/ff' 
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://ingestor:memesbowl123@db:3306/ff' 
 
 db = SQLAlchemy(app)
 
@@ -51,18 +51,19 @@ def get_matchups(week_number=None):
             "team2": {**t2.to_dict(), **(g2.to_dict() if g2 else {})},
             "team3": {**t3.to_dict(), **(g3.to_dict() if g3 else {})}
         })
+        
+        if g1 and g2 and g3:
+            scores.append(g1.totalPoints)
+            scores.append(g2.totalPoints)
+            scores.append(g3.totalPoints)
 
-        scores.append(g1.totalPoints)
-        scores.append(g2.totalPoints)
-        scores.append(g3.totalPoints)
-
-        proj.append(g1.projectedPoints)
-        proj.append(g2.projectedPoints)
-        proj.append(g3.projectedPoints)
+            proj.append(g1.projectedPoints)
+            proj.append(g2.projectedPoints)
+            proj.append(g3.projectedPoints)
 
     med = {
-        'current': median(scores),
-        'projected': median(proj)
+        'current': median(scores) if scores else 0,
+        'projected': median(proj) if proj else 0
     }
     return jsonify({'results':results, 'median': med, 'week': week_number})
 
@@ -70,15 +71,14 @@ def get_matchups(week_number=None):
 def get_scoreboard():
     query = text('''
         with wins as (
-            select mt.* , 
-            m.weekNumber, t.manager, t.teamName, g.totalPoints, g.projectedPoints ,
+            select m.weekNumber, t.*, g.totalPoints, g.projectedPoints ,
             ROW_NUMBER() OVER (PARTITION BY mt.matchupId ORDER BY g.totalPoints ASC) - 1 +
             IF(g.totalPoints > MEDIAN(g.totalPoints) OVER (PARTITION BY m.weekNumber), 1 , 0) as wins
             from matchupteam mt
             join team t on t.teamId = mt.teamId
             join matchup m on m.matchupId = mt.matchupId
                 join game g on g.teamId = mt.teamId and m.weekNumber = g.weekNumber
-                order by  weekNumber, matchupId
+                order by m.weekNumber, m.matchupId
             )
             select sum(wins) as wins, sum(totalPoints) as totalPoints, teamName 
             from wins
