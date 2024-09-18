@@ -1,5 +1,3 @@
-import type { Config } from 'tailwindcss';
-
 import { join } from 'path';
 import { skeleton } from '@skeletonlabs/skeleton/plugin';
 import * as themes from '@skeletonlabs/skeleton/themes';
@@ -11,11 +9,11 @@ export default {
 		join(require.resolve('@skeletonlabs/skeleton-svelte'), '../**/*.{html,js,svelte,ts}')
 	],
 	theme: {
-		extend: {},
+		extend: {}
 	},
 	plugins: [
 		skeleton({
 			themes: [themes.cerberus, themes.rose]
 		})
 	]
-}
+};

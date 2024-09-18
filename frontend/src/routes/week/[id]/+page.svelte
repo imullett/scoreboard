@@ -7,20 +7,22 @@
 
 	const grades = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-	type Medal = '🥇' | '🥈' | '🤡';
-
 	function capitalize(s: string) {
 		return s.charAt(0).toUpperCase() + s.slice(1);
 	}
 
 	function getMatchupTitle(matchup: DivisionalMatchup): string {
-		return Object.entries(matchup)
-			.map(([_, value]) => capitalize(value.manager))
-			.join(', ');
+		return (
+			Object.entries(matchup)
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				.map(([key, value]) => capitalize(value.manager))
+				.join(', ')
+		);
 	}
 
 	function getGroupTotalProjected(matchup: DivisionalMatchup): string {
 		const groupProjection = Object.entries(matchup).reduce(
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			(acc, [key, value]) => acc + (value.projectedPoints ?? 0),
 			0
 		);
@@ -29,6 +31,7 @@
 
 	function getGroupTotalPoints(matchup: DivisionalMatchup): string {
 		const groupTotal = Object.entries(matchup).reduce(
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			(acc, [key, value]) => acc + (value.totalPoints ?? 0),
 			0
 		);
@@ -59,7 +62,8 @@
 
 	function rankMatchup(dm: GradedWeeklyMatchup[]): number[] {
 		const totals: [number, number][] = dm.map((m, i) => {
-			return [Object.entries(m).reduce((acc, [k, value]) => value.totalPoints + acc, 0), i];
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			return [Object.entries(m).reduce((acc, [key, value]) => value.totalPoints + acc, 0), i];
 		});
 
 		totals.sort((a, b) => b[0] - a[0]);
@@ -133,13 +137,14 @@
 					<div
 						class="grid grid-cols-1 grid-rows-3 gap-y-2 overflow-hidden lg:grid-cols-3 lg:grid-rows-1 lg:gap-x-2"
 					>
-						{#each Object.entries(matchup) as [key, value]}
+						<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
+						{#each Object.entries(matchup) as [_, value]}
 							<div class="card space-y-1 p-2 preset-filled-surface-100-900">
 								<header class="flex w-full justify-between gap-1">
 									<Avatar classes="shrink-0" src={value.profilePicture} name={value.manager} />
 									<div>
 										{@render projected(value.projectedPoints)}
-										{@render lettergrade(value.grade)}
+										{@render lettergrade(value.grade as string)}
 									</div>
 								</header>
 

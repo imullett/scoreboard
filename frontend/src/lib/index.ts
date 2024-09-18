@@ -1,18 +1,30 @@
-import { error } from "@sveltejs/kit";
+import { error } from '@sveltejs/kit';
 
-export const standingsFilters = ["ppr", "wins"] as const;
-export const matchupWeeks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18] as const;
+export const standingsFilters = ['ppr', 'wins'] as const;
+export const matchupWeeks = [
+	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+] as const;
 export const grades = [
-	"A+", "A", "A-",
-	"B+", "B", "B-",
-	"C+", "C", "C-",
-	"D+", "D", "D-",
-	"F+", "F", "F-"
+	'A+',
+	'A',
+	'A-',
+	'B+',
+	'B',
+	'B-',
+	'C+',
+	'C',
+	'C-',
+	'D+',
+	'D',
+	'D-',
+	'F+',
+	'F',
+	'F-'
 ] as const;
 
-export type RankingGrade = typeof grades[number];
-export type RankingSort = typeof standingsFilters[number];
-export type MatchupWeek = typeof matchupWeeks[number];
+export type RankingGrade = (typeof grades)[number];
+export type RankingSort = (typeof standingsFilters)[number];
+export type MatchupWeek = (typeof matchupWeeks)[number];
 
 export function getCurrentWeek(date: Date): MatchupWeek {
 	const seasonStart = new Date('2024-09-03T01:00:00Z');
@@ -27,7 +39,6 @@ export function round2(num: number): string {
 	return rounded.toFixed(2);
 }
 
-
 export async function fetchFromAPI<T>(endpoint: string): Promise<T> {
 	try {
 		const response = await fetch(`http://localhost:5000/${endpoint}`);
@@ -41,4 +52,3 @@ export async function fetchFromAPI<T>(endpoint: string): Promise<T> {
 		error(403, `Failed to get data from ${endpoint}.`);
 	}
 }
-
