@@ -1,4 +1,17 @@
 services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PUBLIC_API_URL=http://localhost:5000
+      - PRIVATE_API_URL=http://flask:5000
+    depends_on:
+      - flask
+
   flask:
     build: .
     restart: always
