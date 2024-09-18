@@ -42,7 +42,6 @@
 		const flattened = Object.values(matchup);
 		const sortedGroup = flattened.sort((a, b) => b.totalPoints - a.totalPoints);
 		const teamRank = sortedGroup.findIndex((a) => a.teamId === teamId);
-
 		switch (teamRank) {
 			case 0:
 				return '🥇' + ' ' + beatTheMedian(sortedGroup[teamRank]);
@@ -65,16 +64,11 @@
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			return [Object.entries(m).reduce((acc, [key, value]) => value.totalPoints + acc, 0), i];
 		});
-
 		totals.sort((a, b) => b[0] - a[0]);
-
 		const rankings = new Array(totals.length);
 		totals.forEach((item, rank) => {
 			rankings[item[1]] = rank + 1;
 		});
-
-		console.log(rankings);
-
 		return rankings;
 	}
 

@@ -1,6 +1,7 @@
 import type { PageServerLoad } from './$types';
-import { fetchFromAPI, standingsFilters, type RankingSort } from '$lib';
+import { standingsFilters, type RankingSort } from '$lib';
 import { fail, redirect, type Actions } from '@sveltejs/kit';
+import { fetchFromAPI } from '$lib/server';
 
 export interface Scoreboard {
 	teamName: string;

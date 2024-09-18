@@ -1,7 +1,8 @@
 import type { PageServerLoad } from './$types';
-import { fetchFromAPI, grades, matchupWeeks, type MatchupWeek, type RankingGrade } from '$lib';
+import { grades, matchupWeeks, type MatchupWeek, type RankingGrade } from '$lib';
 import { error } from '@sveltejs/kit';
 import { type Team, type WeeklyMatchup } from '../+page.server';
+import { fetchFromAPI } from '$lib/server';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const week = Number(params.id) as MatchupWeek;
