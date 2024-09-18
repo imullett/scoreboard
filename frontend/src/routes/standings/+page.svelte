@@ -1,42 +1,43 @@
 <script lang="ts">
-	import type { PageData } from '../$types';
-	import type { Scoreboard } from './proxy+page.server';
+	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
+	import { getCurrentWeek, round2, type RankingSort } from '$lib';
+	import type { PageData } from './$types';
+
+	let filterForm: HTMLFormElement;
+	let currentWeek = getCurrentWeek(new Date());
+	let banner = `standings after ${currentWeek - 1} weeks`;
 
 	let { data } = $props<{ data: PageData }>();
 
-	let filter = $state('ppr');
-	let scores = $state<Scoreboard[]>(data.scores);
+	let filter: RankingSort = $state(($page.url.searchParams.get('filter') as RankingSort) ?? 'wins');
+	let scores = $derived(
+		data.scores.map((score) => ({ ...score, totalPoints: round2(score.totalPoints) }))
+	);
 
-	$effect(() => {
-		scores = scores.sort((a, b) => {
-			switch (filter) {
-				case 'wins': {
-					const primary_delta = Number(b.wins) - Number(a.wins);
-					if (primary_delta !== 0) {
-						return primary_delta;
-					} else {
-						return b.totalPoints - a.totalPoints;
-					}
-				}
-				default:
-					return b.totalPoints - a.totalPoints;
-			}
-		});
-	});
+	function onFilterChange() {
+		filterForm.requestSubmit();
+	}
 </script>
 
-<div class="m-auto h-full w-3/4 space-y-2 pt-4">
-	<div class="flex flex-row justify-start gap-4 rounded-lg bg-surface-900 px-4 py-4">
+<div class="m-auto h-full w-full space-y-2 pt-1 lg:w-3/4">
+	<h6 class="h6 text-center text-secondary-300">{banner}</h6>
+	<form
+		method="POST"
+		use:enhance
+		bind:this={filterForm}
+		class="flex flex-row justify-start gap-4 rounded-lg bg-surface-900 px-4 py-4"
+	>
 		<label for="filter" class="label w-fit text-nowrap">Rank By</label>
-		<select bind:value={filter} id="filter" class="select">
+		<select name="filter" bind:value={filter} id="filter" class="select" onchange={onFilterChange}>
 			<option value="ppr">Total PPR</option>
 			<option value="wins">League Wins</option>
 		</select>
-	</div>
+	</form>
 	<div class="table-wrap h-[80%]">
 		<table class="table">
 			<thead class="sticky top-0">
-				<tr class="text-secondary bg-secondary-800 text-white">
+				<tr class="text-secondary bg-secondary-700 text-white">
 					<th>Name</th>
 					<th>Total PPR</th>
 					<th>League Points</th>
