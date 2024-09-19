@@ -6,8 +6,9 @@
 	import { Nav } from '@skeletonlabs/skeleton-svelte';
 	import { Trophy, Calendar } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 
-	$: selected_menuitem = 'week';
+	$: selected_menuitem = $page.url.pathname.includes('week') ? 'week' : 'standings';
 </script>
 
 <div
