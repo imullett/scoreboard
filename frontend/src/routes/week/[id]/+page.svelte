@@ -137,7 +137,7 @@
 								<header class="flex w-full justify-between gap-1">
 									<Avatar classes="shrink-0" src={value.profilePicture} name={value.manager} />
 									<div>
-										{@render projected(value.projectedPoints)}
+										{@render projected(value.projectedPoints ?? 0)}
 										{@render lettergrade(value.grade as string)}
 									</div>
 								</header>
@@ -153,7 +153,8 @@
 
 								<footer>
 									<div class="flex justify-between text-xs">
-										<span class="badge text-lg preset-filled">{round2(value.totalPoints)}</span>
+										<span class="badge text-lg preset-filled">{round2(value.totalPoints ?? 0)}</span
+										>
 									</div>
 								</footer>
 							</div>
