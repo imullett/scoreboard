@@ -1,6 +1,8 @@
 <script lang="ts">
 	import '../app.css';
 
+	import header from '$lib/images/header.gif';
+
 	import { Nav } from '@skeletonlabs/skeleton-svelte';
 	import { Trophy, Calendar } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
@@ -9,10 +11,12 @@
 </script>
 
 <div
-	class="card m-auto grid h-svh max-w-[95%] grid-rows-[auto_1fr_auto] pb-5 border-surface-100-900 lg:max-w-[80%]"
+	class="m-auto grid h-svh max-w-[95%] grid-rows-[auto_1fr_auto] pb-5 border-surface-100-900 lg:max-w-[80%]"
 >
-	<header>
-		<h1 class="h1 text-center">Memes Bowl 2024</h1>
+	<header class="bg-[url('$lib/images/football.gif')]">
+		<div class="flex justify-center p-6">
+			<img src={header} alt="memesbowl" />
+		</div>
 	</header>
 
 	<main class="h-full overflow-hidden">

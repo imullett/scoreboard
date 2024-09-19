@@ -7,6 +7,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - ORIGIN=http://localhost:3000
       - PUBLIC_API_URL=http://localhost:5000
       - PRIVATE_API_URL=http://flask:5000
     depends_on:
