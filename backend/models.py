@@ -54,6 +54,7 @@ class TeamData:
     yahooId: str = Column(String(255), nullable=False)
     profilePicture: str = Column(String(1000), nullable=False)
     manager: str = Column(String(255), nullable=False)
+    division: int = Column(Integer, nullable=True)
 
     def to_dict(self):
         return asdict(self)
