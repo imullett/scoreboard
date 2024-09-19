@@ -1,3 +1,4 @@
+export const standingsGroups = ['overall', 'divisional'] as const;
 export const standingsFilters = ['ppr', 'wins'] as const;
 export const matchupWeeks = [
 	1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
@@ -20,6 +21,7 @@ export const grades = [
 	'F-'
 ] as const;
 
+export type RankingGroup = (typeof standingsGroups)[number];
 export type RankingGrade = (typeof grades)[number];
 export type RankingSort = (typeof standingsFilters)[number];
 export type MatchupWeek = (typeof matchupWeeks)[number];
