@@ -1,57 +1,91 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
-	import { getCurrentWeek, round2, type RankingSort } from '$lib';
-	import type { PageData } from './$types';
+	import { getCurrentWeek, type RankingGroup, type RankingSort } from '$lib';
+	import { round2 } from '$lib';
+	import { Segment } from '@skeletonlabs/skeleton-svelte';
+	import type { Scoreboard } from './+page.server';
 
 	let filterForm: HTMLFormElement;
 	let currentWeek = getCurrentWeek(new Date());
 	let banner = `standings after ${currentWeek - 1} weeks`;
 
-	let { data } = $props<{ data: PageData }>();
+	let { data } = $props();
 
-	let filter: RankingSort = $state(($page.url.searchParams.get('filter') as RankingSort) ?? 'wins');
-	let scores = $derived(
-		data.scores.map((score) => ({ ...score, totalPoints: round2(score.totalPoints) }))
+	let selectedDivision: 1 | 2 | 3 = $state(1);
+	let grouping: RankingGroup = $state(
+		(($page.url.searchParams.get('grouping') as RankingGroup) || data.grouping) ?? 'overall'
 	);
+	let filter: RankingSort = $state(($page.url.searchParams.get('filter') as RankingSort) ?? 'wins');
 
-	function onFilterChange() {
+	let scores: Scoreboard[] = $derived.by(() => {
+		if (Array.isArray(data.scores[0])) {
+			const divs = data.scores as Scoreboard[][];
+			const di = divs.findIndex((d) => d[0].division === selectedDivision);
+			return data.scores[di] as Scoreboard[];
+		} else {
+			return data.scores as Scoreboard[];
+		}
+	});
+
+	function onFormChange() {
 		filterForm.requestSubmit();
 	}
 </script>
 
-<div class="m-auto h-full w-full space-y-2 pt-1 lg:w-3/4">
-	<h6 class="h6 text-center text-secondary-300">{banner}</h6>
-	<form
-		method="POST"
-		use:enhance
-		bind:this={filterForm}
-		class="flex flex-row justify-start gap-4 rounded-lg bg-surface-900 px-4 py-4"
-	>
-		<label for="filter" class="label w-fit text-nowrap">Rank By</label>
-		<select name="filter" bind:value={filter} id="filter" class="select" onchange={onFilterChange}>
-			<option value="ppr">Total PPR</option>
-			<option value="wins">League Wins</option>
-		</select>
-	</form>
+{#snippet standings_table(scores: Scoreboard[])}
 	<div class="table-wrap h-[80%]">
-		<table class="table">
+		<table class="table table-fixed">
 			<thead class="sticky top-0">
 				<tr class="text-secondary bg-secondary-700 text-white">
-					<th>Name</th>
-					<th>Total PPR</th>
-					<th>League Points</th>
+					<th class="w-1/2">Name</th>
+					<th class="w-1/4">Total PPR</th>
+					<th class="w-1/4 !text-right">League Points</th>
 				</tr>
 			</thead>
 			<tbody class="w-full overflow-y-scroll hover:[&>tr]:preset-tonal-primary">
 				{#each scores as score}
 					<tr>
 						<td>{score.teamName}</td>
-						<td>{score.totalPoints}</td>
-						<td>{score.wins}</td>
+						<td>{round2(score.totalPoints)}</td>
+						<td class="text-right">{score.wins}</td>
 					</tr>
 				{/each}
 			</tbody>
 		</table>
 	</div>
+{/snippet}
+
+<div class="m-auto h-full w-full space-y-2 pt-1 lg:w-3/4">
+	<h6 class="h6 text-center text-secondary-300">{banner}</h6>
+	<form
+		method="POST"
+		use:enhance
+		onchange={onFormChange}
+		bind:this={filterForm}
+		class="m-auto flex w-fit flex-col items-center gap-2"
+	>
+		<div>
+			<Segment name="grouping" bind:value={grouping}>
+				<Segment.Item value="overall">Overall</Segment.Item>
+				<Segment.Item value="divisional">Divisional</Segment.Item>
+			</Segment>
+		</div>
+		<div>
+			<Segment name="filter" bind:value={filter}>
+				<Segment.Item value="ppr">PPR</Segment.Item>
+				<Segment.Item value="wins">Wins</Segment.Item>
+			</Segment>
+		</div>
+	</form>
+	{#if grouping === 'divisional'}
+		<div class="flex w-full justify-center">
+			<Segment name="division" bind:value={selectedDivision}>
+				<Segment.Item value={1}>1</Segment.Item>
+				<Segment.Item value={2}>2</Segment.Item>
+				<Segment.Item value={3}>3</Segment.Item>
+			</Segment>
+		</div>
+	{/if}
+	{@render standings_table(scores)}
 </div>
