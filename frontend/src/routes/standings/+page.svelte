@@ -8,7 +8,7 @@
 
 	let filterForm: HTMLFormElement;
 	let currentWeek = getCurrentWeek(new Date());
-	let banner = `standings after ${currentWeek - 1} weeks`;
+	let banner = `Week ${currentWeek - 1} Standings`;
 
 	let { data } = $props();
 
@@ -34,13 +34,13 @@
 </script>
 
 {#snippet standings_table(scores: Scoreboard[])}
-	<div class="table-wrap h-[80%]">
+	<div class="table-wrap h-[80%] border-spacing-1">
 		<table class="table table-fixed">
 			<thead class="sticky top-0">
-				<tr class="text-secondary bg-secondary-700 text-white">
+				<tr class="text-secondary bg-secondary-500 text-white">
 					<th class="w-1/2">Name</th>
-					<th class="w-1/4">Total PPR</th>
-					<th class="w-1/4 !text-right">League Points</th>
+					<th class="w-1/4 !text-right">Total Points</th>
+					<th class="w-1/4 !text-right">Wins</th>
 				</tr>
 			</thead>
 			<tbody class="w-full overflow-y-scroll hover:[&>tr]:preset-tonal-primary">
@@ -73,7 +73,7 @@
 		</div>
 		<div>
 			<Segment name="filter" bind:value={filter}>
-				<Segment.Item value="ppr">PPR</Segment.Item>
+				<Segment.Item value="ppr">Points</Segment.Item>
 				<Segment.Item value="wins">Wins</Segment.Item>
 			</Segment>
 		</div>

@@ -4,11 +4,11 @@
 	import header from '$lib/images/header.gif';
 
 	import { Nav } from '@skeletonlabs/skeleton-svelte';
-	import { Trophy, Calendar } from 'lucide-svelte';
+	import { Trophy, Calendar, Flame} from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	$: selected_menuitem = $page.url.pathname.includes('week') ? 'week' : 'standings';
+	$: selected_menuitem = $page.url.pathname.split('/')[1]
 </script>
 
 <div
@@ -26,11 +26,14 @@
 
 	<footer class="px-8">
 		<Nav.Bar bind:value={selected_menuitem} classes="rounded-lg">
-			<Nav.Tile id="week" label="Matchups" onclick={() => goto('/week')}>
+			<Nav.Tile id="week" label="Matchups" active='bg-secondary-500' onclick={() => goto('/week')}>
 				<Calendar />
 			</Nav.Tile>
-			<Nav.Tile id="standings" label="Standings" onclick={() => goto('/standings')}>
+			<Nav.Tile id="standings" label="Standings" active='bg-secondary-700' onclick={() => goto('/standings')}>
 				<Trophy />
+			</Nav.Tile>
+			<Nav.Tile id="luke" label="Luke" active='bg-secondary-700' onclick={() => goto('/luke')}>
+				<Flame />
 			</Nav.Tile>
 		</Nav.Bar>
 	</footer>
