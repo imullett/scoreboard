@@ -5,6 +5,11 @@ from sqlalchemy.orm import aliased
 from sqlalchemy.sql import text
 from sqlalchemy.sql.expression import func
 from statistics import median
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+from ingest_scores import ingest_scores
+from ingest_teams import ingest_teams
+
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = (
@@ -13,6 +18,8 @@ app.config["SQLALCHEMY_DATABASE_URI"] = (
 
 db = SQLAlchemy(app)
 
+scheduler = BackgroundScheduler()
+scheduler.add_job(ingest_scores,IntervalTrigger(minutes=15), next_run_time=None)
 
 @app.route("/matchups", methods=["GET"])
 @app.route("/matchups/<int:week_number>", methods=["GET"])

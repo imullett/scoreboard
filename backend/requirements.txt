@@ -4,3 +4,4 @@ yfpy==15.0.3
 sqlalchemy 
 PyMySQL
 Flask-SQLAlchemy
+apscheduler

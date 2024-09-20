@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 
 league_id = '790777'
 
-def ingest_scores(start_week):
+def ingest_scores(start_week = None):
     query = YahooFantasySportsQuery(
         auth_dir='secrets',
         league_id=league_id,
