@@ -11,7 +11,8 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - ORIGIN=https://fantasy.imullett.com
+      # - ORIGIN=https://fantasy.imullett.com
+      - ORIGIN=http://localhost:3000
       - PUBLIC_API_URL=http://localhost:5000
       - PRIVATE_API_URL=http://flask:5000
     depends_on:
@@ -20,15 +21,17 @@ services:
       - tunnel
 
   flask:
-    build: .
+    build: 
+      context: ./backend
+      dockerfile: api/Dockerfile
     restart: always
     ports:
       - 5000:5000
     depends_on:
       db:
         condition: service_healthy
-    volumes:
-      - ./secrets:/app/secrets
+      ingestor:
+        condition: service_started
     networks:
       - tunnel
 
@@ -49,5 +52,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3 
+    networks:
+      - tunnel
+
+  ingestor:
+    build:
+      context: ./backend
+      dockerfile: ingestor/Dockerfile
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend/secrets:/app/secrets
     networks:
       - tunnel

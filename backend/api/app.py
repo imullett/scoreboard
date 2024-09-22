@@ -1,18 +1,15 @@
+import logging
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from models import TeamData, GameData, MatchupData, CurrentWeek
+from lib.models import TeamData, GameData, MatchupData, CurrentWeek
 from sqlalchemy.orm import aliased
 from sqlalchemy.sql import text
 from sqlalchemy.sql.expression import func
 from statistics import median
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.interval import IntervalTrigger
-from ingest_scores import ingest_scores
-from ingest_teams import ingest_teams
-import logging
 
-logging.basicConfig()
-logging.getLogger('sqlalchemy').setLevel(logging.WARNING)
+logging.basicConfig(level=logging.INFO)
+logging.getLogger('concurrent').setLevel(logging.ERROR)
+logging.getLogger('yfpy').setLevel(logging.ERROR)
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = (
@@ -20,11 +17,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = (
 )
 
 db = SQLAlchemy(app)
-
-scheduler = BackgroundScheduler()
-scheduler.add_job(ingest_scores, 'interval', seconds=60)
-scheduler.add_job(ingest_teams,IntervalTrigger(weeks=1))
-scheduler.start()
 
 @app.route("/matchups", methods=["GET"])
 @app.route("/matchups/<int:week_number>", methods=["GET"])
@@ -120,4 +112,6 @@ def get_scoreboard():
 
 
 if __name__ == "__main__":
+    # ingest_teams()
+    # ingest_scores(start_week=1)
     app.run(host="0.0.0.0", port=5000)

@@ -1,16 +1,16 @@
 from sqlalchemy import Column, Integer, String, Float, UniqueConstraint
-from sqlalchemy.orm import registry
+from sqlalchemy.orm import DeclarativeBase, MappedAsDataclass
 from dataclasses import asdict
 from sqlalchemy import log as sqlalchemy_log
 import logging
 
 sqlalchemy_log._add_default_handler = lambda x: None
-logging.disable(logging.WARNING)
+# logging.disable(logging.WARNING)
+class Base(DeclarativeBase, MappedAsDataclass):
+    pass
 
-reg = registry()
-
-@reg.mapped_as_dataclass
-class GameData:
+# @reg.mapped_as_dataclass
+class GameData(Base):
     __tablename__ = 'game'
 
     gameId: int = Column(Integer, nullable=True)
@@ -50,8 +50,8 @@ class GameData:
     def to_dict(self):
         return asdict(self)
 
-@reg.mapped_as_dataclass
-class TeamData:
+# @reg.mapped_as_dataclass
+class TeamData(Base):
     __tablename__ = 'team'
 
     teamId: int = Column(Integer, primary_key=True, autoincrement=True)
@@ -64,8 +64,8 @@ class TeamData:
     def to_dict(self):
         return asdict(self)
 
-@reg.mapped_as_dataclass
-class MatchupData:
+# @reg.mapped_as_dataclass
+class MatchupData(Base):
     __tablename__ = 'matchup'
 
     matchupId: int = Column(Integer, primary_key=True, autoincrement=True)
@@ -78,8 +78,8 @@ class MatchupData:
         return asdict(self)
 
 
-@reg.mapped_as_dataclass
-class CurrentWeek:
+# @reg.mapped_as_dataclass
+class CurrentWeek(Base):
     __tablename__ = 'currentweek'
 
     id: int = Column(Integer, primary_key=True)

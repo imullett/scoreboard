@@ -1,7 +1,8 @@
-from yfpy.query import YahooFantasySportsQuery
-from models import TeamData
+from lib.models import TeamData
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
+
+from yfpy.query import YahooFantasySportsQuery
 
 league_id = '790777'
 

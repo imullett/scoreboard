@@ -1,8 +1,9 @@
-from yfpy.query import YahooFantasySportsQuery
-from models import GameData, CurrentWeek
+from lib.models import GameData, CurrentWeek
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
 from argparse import ArgumentParser
+# import last to fix logging bug 
+from yfpy.query import YahooFantasySportsQuery
 
 league_id = '790777'
 
@@ -36,6 +37,9 @@ def ingest_scores(start_week = None):
 
         session.merge(CurrentWeek(id=1,number=current_week)) 
         session.commit()
+
+def test():
+    print('testing')
 
 if __name__ == '__main__':
     parser = ArgumentParser()
