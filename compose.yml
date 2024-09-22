@@ -1,3 +1,7 @@
+networks:
+  tunnel:
+    external: true
+
 services:
   frontend:
     build:
@@ -7,11 +11,13 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - ORIGIN=http://localhost:3000
+      - ORIGIN=https://fantasy.imullett.com
       - PUBLIC_API_URL=http://localhost:5000
       - PRIVATE_API_URL=http://flask:5000
     depends_on:
       - flask
+    networks:
+      - tunnel
 
   flask:
     build: .
@@ -21,10 +27,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    env_file: '.env' 
     volumes:
       - ./secrets:/app/secrets
-  
+    networks:
+      - tunnel
+
   db:
     image: mariadb:latest
     restart: always
@@ -42,3 +49,5 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3 
+    networks:
+      - tunnel

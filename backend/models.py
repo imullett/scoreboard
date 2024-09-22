@@ -1,6 +1,11 @@
 from sqlalchemy import Column, Integer, String, Float, UniqueConstraint
 from sqlalchemy.orm import registry
 from dataclasses import asdict
+from sqlalchemy import log as sqlalchemy_log
+import logging
+
+sqlalchemy_log._add_default_handler = lambda x: None
+logging.disable(logging.WARNING)
 
 reg = registry()
 

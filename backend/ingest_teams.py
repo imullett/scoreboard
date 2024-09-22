@@ -13,7 +13,7 @@ def ingest_teams():
     )
     teams = query.get_league_teams()
 
-    engine = create_engine('mysql+pymysql://ingestor:memesbowl123@db:3306/ff')
+    engine = create_engine('mysql+pymysql://ingestor:memesbowl123@db:3306/ff', echo=False)
 
     with Session(engine) as session:
         print('Ingesting teams...')
